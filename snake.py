@@ -8,20 +8,32 @@ def main(stdscr):
     curses.curs_set(0)
     stdscr.clear()
     snake = [
-        (70, 3),
-        (70, 2),
-        (70, 1),
-        (70, 0),
+        (70, x) for x in range(8, 5, -1)
     ]
+    left_boundary = 30
+    top_boundary = 1
+    right_boundary = 90
+    bottom_boundary = 20
+    horizontal_walls = [(x, top_boundary) for x in range(left_boundary, right_boundary)] + \
+                      [(x, bottom_boundary) for x in range(left_boundary, right_boundary)]
+    vertical_walls = [(left_boundary, y) for y in range(top_boundary + 1, bottom_boundary + 1)] + \
+                    [(right_boundary, y) for y in range(top_boundary + 1, bottom_boundary + 1)]
 
     food = (0, 0)
 
     def spawn_food():
         nonlocal food
-        food = (random.randint(0, curses.COLS - 2), random.randint(0, curses.LINES - 2))
+        food = (random.randint(left_boundary + 1, right_boundary - 1), random.randint(top_boundary + 1, bottom_boundary - 1))
         while food in snake:
-            food = (random.randint(0, curses.COLS - 2), random.randint(0, curses.LINES - 2))
+            food = (random.randint(left_boundary + 1, right_boundary - 1), random.randint(top_boundary + 1, bottom_boundary - 1))
 
+    def print_walls():
+        for wall in horizontal_walls:
+            stdscr.addstr(wall[1], wall[0], "_")
+        for wall in vertical_walls:
+            stdscr.addstr(wall[1], wall[0], "|")
+
+    print_walls()
     spawn_food()
     curses.halfdelay(1)
     stdscr.nodelay(True)
@@ -45,15 +57,16 @@ def main(stdscr):
     def check_collision(next_head):
         if next_head in snake:
             return True
-        if next_head[0] < 0 or next_head[0] >= curses.COLS:
+        if next_head[0] < left_boundary or next_head[0] >= right_boundary:
             return True
-        if next_head[1] < 0 or next_head[1] >= curses.LINES:
+        if next_head[1] < top_boundary or next_head[1] >= bottom_boundary:
             return True
         return False
     
     def render():
         stdscr.clear()
         print_snake()
+        print_walls()
         stdscr.addstr(food[1], food[0], "*")
         stdscr.refresh()
 
@@ -82,6 +95,7 @@ def main(stdscr):
             break
         if next_head == food:
             snake.insert(0, next_head)
+            curses.beep()
             spawn_food()
         else:
             advance_snake(next_head)
