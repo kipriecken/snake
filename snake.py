@@ -27,6 +27,10 @@ def main(stdscr):
 
     food = (0, 0)
 
+    def print_score():
+        score = len(snake) - 3
+        stdscr.addstr(0, left_boundary, f" Score: {score} ", curses.A_REVERSE)
+
     def spawn_food():
         nonlocal food
         food = (random.randint(left_boundary + 1, right_boundary - 1), random.randint(top_boundary + 1, bottom_boundary - 1))
@@ -42,6 +46,7 @@ def main(stdscr):
         for pos in snake:
             stdscr.addstr(pos[1], pos[0], "#", curses.color_pair(1))
 
+    print_score()
     print_walls()
     print_snake()
     spawn_food()
@@ -62,7 +67,7 @@ def main(stdscr):
             return True
         if next_head[0] < left_boundary or next_head[0] >= right_boundary:
             return True
-        if next_head[1] < top_boundary or next_head[1] >= bottom_boundary:
+        if next_head[1] < top_boundary + 1 or next_head[1] >= bottom_boundary:
             return True
         return False
     
@@ -70,6 +75,7 @@ def main(stdscr):
         stdscr.clear()
         print_snake()
         print_walls()
+        print_score()
         stdscr.addstr(food[1], food[0], "*", curses.color_pair(2))
         stdscr.refresh()
 
