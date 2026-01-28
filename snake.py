@@ -22,8 +22,6 @@ def main(stdscr):
 
     stdscr.keypad(True)
 
-    next_head = (snake[0][0] + movement[0], snake[0][1] + movement[1])
-
     def advance_snake(next_head):
         snake.insert(0, next_head)
         snake.pop()
@@ -40,6 +38,11 @@ def main(stdscr):
         if next_head[1] < 0 or next_head[1] >= curses.LINES:
             return True
         return False
+    
+    def render():
+        stdscr.clear()
+        print_snake()
+        stdscr.refresh()
 
     while True:
         val = stdscr.getch()
@@ -66,9 +69,7 @@ def main(stdscr):
             break
         advance_snake(next_head)
 
-        stdscr.clear()
-        print_snake()
-        stdscr.refresh()
+        render()
 
     stdscr.keypad(False)
     curses.echo()
