@@ -1,5 +1,6 @@
 import curses
 from curses import wrapper
+import random
 
 
 def main(stdscr):
@@ -12,11 +13,22 @@ def main(stdscr):
         (70, 1),
         (70, 0),
     ]
+
+    food = (0, 0)
+
+    def spawn_food():
+        nonlocal food
+        food = (random.randint(0, curses.COLS - 2), random.randint(0, curses.LINES - 2))
+        while food in snake:
+            food = (random.randint(0, curses.COLS - 2), random.randint(0, curses.LINES - 2))
+
+    spawn_food()
     curses.halfdelay(1)
     stdscr.nodelay(True)
 
     for pos in snake:
         stdscr.addstr(pos[1], pos[0], "#")
+    stdscr.addstr(food[1], food[0], "*")
     stdscr.refresh()
     curses.noecho()
 
@@ -42,6 +54,7 @@ def main(stdscr):
     def render():
         stdscr.clear()
         print_snake()
+        stdscr.addstr(food[1], food[0], "*")
         stdscr.refresh()
 
     while True:
@@ -67,7 +80,11 @@ def main(stdscr):
         next_head = (snake[0][0] + movement[0], snake[0][1] + movement[1])
         if check_collision(next_head):
             break
-        advance_snake(next_head)
+        if next_head == food:
+            snake.insert(0, next_head)
+            spawn_food()
+        else:
+            advance_snake(next_head)
 
         render()
 
