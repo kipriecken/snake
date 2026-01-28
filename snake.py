@@ -3,7 +3,7 @@ from curses import wrapper
 
 
 def main(stdscr):
-    direction = 'DOWN'
+    movement = (0, 1)
     curses.curs_set(0)
     stdscr.clear()
     snake = [
@@ -22,48 +22,48 @@ def main(stdscr):
 
     stdscr.keypad(True)
 
+    next_head = (snake[0][0] + movement[0], snake[0][1] + movement[1])
+
+    def advance_snake(next_head):
+        snake.insert(0, next_head)
+        snake.pop()
+    
+    def print_snake():
+        for pos in snake:
+            stdscr.addstr(pos[1], pos[0], "#")
+
+    def check_collision(next_head):
+        if next_head in snake:
+            return True
+        if next_head[0] < 0 or next_head[0] >= curses.COLS:
+            return True
+        if next_head[1] < 0 or next_head[1] >= curses.LINES:
+            return True
+        return False
+
     while True:
         val = stdscr.getch()
         if val == -1:
             val = None
-        if snake[0][0] in (0, curses.COLS - 1) or snake[0][1] in (0, curses.LINES - 1):
-            break
         match val:
             case curses.KEY_RIGHT:
-                direction = 'RIGHT'
-            case curses.KEY_UP:
-                direction = 'UP'
-            case curses.KEY_DOWN:
-                direction = 'DOWN'
+                movement = (1, 0)
             case curses.KEY_LEFT:
-                direction = 'LEFT'
+                movement = (-1, 0)
+            case curses.KEY_UP:
+                movement = (0, -1)
+            case curses.KEY_DOWN:
+                movement = (0, 1)
             case 'q' | 'Q':
                 break
-        match direction:
-            case 'RIGHT':
-                if (snake[0][0] + 1, snake[0][1]) in snake:
-                    break
-                if snake[0][0] < curses.COLS - 1:
-                    snake.insert(0, (snake[0][0] + 1, snake[0][1]))
-            case 'LEFT':
-                if (snake[0][0] - 1, snake[0][1]) in snake:
-                    break
-                if snake[0][0] > 0:
-                    snake.insert(0, (snake[0][0] - 1, snake[0][1]))
-            case 'UP':
-                if (snake[0][0], snake[0][1] - 1) in snake:
-                    break
-                if snake[0][1] > 0:
-                    snake.insert(0, (snake[0][0], snake[0][1] - 1))
-            case 'DOWN':
-                if (snake[0][0], snake[0][1] + 1) in snake:
-                    break
-                if snake[0][1] < curses.LINES - 1:
-                    snake.insert(0, (snake[0][0], snake[0][1] + 1))
-        snake.pop()
+        
+        next_head = (snake[0][0] + movement[0], snake[0][1] + movement[1])
+        if check_collision(next_head):
+            break
+        advance_snake(next_head)
+
         stdscr.clear()
-        for pos in snake:
-            stdscr.addstr(pos[1], pos[0], "#")
+        print_snake()
         stdscr.refresh()
 
     stdscr.keypad(False)
