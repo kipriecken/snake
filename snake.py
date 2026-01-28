@@ -10,6 +10,12 @@ def main(stdscr):
     snake = [
         (70, x) for x in range(8, 5, -1)
     ]
+
+    curses.start_color()
+    curses.init_pair(1, curses.COLOR_GREEN, curses.COLOR_BLACK)
+    curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)    # Food
+    curses.init_pair(3, curses.COLOR_WHITE, curses.COLOR_BLACK)  
+
     left_boundary = 30
     top_boundary = 1
     right_boundary = 90
@@ -29,18 +35,19 @@ def main(stdscr):
 
     def print_walls():
         for wall in horizontal_walls:
-            stdscr.addstr(wall[1], wall[0], "_")
+            stdscr.addstr(wall[1], wall[0], "_", curses.color_pair(3))
         for wall in vertical_walls:
-            stdscr.addstr(wall[1], wall[0], "|")
+            stdscr.addstr(wall[1], wall[0], "|", curses.color_pair(3))
+    def print_snake():
+        for pos in snake:
+            stdscr.addstr(pos[1], pos[0], "#", curses.color_pair(1))
 
     print_walls()
+    print_snake()
     spawn_food()
     curses.halfdelay(1)
     stdscr.nodelay(True)
 
-    for pos in snake:
-        stdscr.addstr(pos[1], pos[0], "#")
-    stdscr.addstr(food[1], food[0], "*")
     stdscr.refresh()
     curses.noecho()
 
@@ -49,10 +56,6 @@ def main(stdscr):
     def advance_snake(next_head):
         snake.insert(0, next_head)
         snake.pop()
-    
-    def print_snake():
-        for pos in snake:
-            stdscr.addstr(pos[1], pos[0], "#")
 
     def check_collision(next_head):
         if next_head in snake:
@@ -67,7 +70,7 @@ def main(stdscr):
         stdscr.clear()
         print_snake()
         print_walls()
-        stdscr.addstr(food[1], food[0], "*")
+        stdscr.addstr(food[1], food[0], "*", curses.color_pair(2))
         stdscr.refresh()
 
     while True:
