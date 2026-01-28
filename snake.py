@@ -21,7 +21,7 @@ def main(stdscr):
     top_boundary = 1
     right_boundary = 90
     bottom_boundary = 20
-    horizontal_walls = [(x, top_boundary) for x in range(left_boundary, right_boundary)] + \
+    horizontal_walls = [(x, top_boundary) for x in range(left_boundary + 1, right_boundary)] + \
                       [(x, bottom_boundary) for x in range(left_boundary, right_boundary)]
     vertical_walls = [(left_boundary, y) for y in range(top_boundary + 1, bottom_boundary + 1)] + \
                     [(right_boundary, y) for y in range(top_boundary + 1, bottom_boundary + 1)]
