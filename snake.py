@@ -13,8 +13,9 @@ def main(stdscr):
 
     curses.start_color()
     curses.init_pair(1, curses.COLOR_GREEN, curses.COLOR_BLACK)
-    curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)    # Food
+    curses.init_pair(2, curses.COLOR_YELLOW, curses.COLOR_BLACK)    # Food
     curses.init_pair(3, curses.COLOR_WHITE, curses.COLOR_BLACK)  
+    curses.init_pair(4, curses.COLOR_RED, curses.COLOR_BLACK)  
 
     left_boundary = 30
     top_boundary = 1
@@ -44,7 +45,10 @@ def main(stdscr):
             stdscr.addstr(wall[1], wall[0], "|", curses.color_pair(3))
     def print_snake():
         for pos in snake:
-            stdscr.addstr(pos[1], pos[0], "#", curses.color_pair(1))
+            if pos == snake[0]:
+                stdscr.addstr(pos[1], pos[0], "#", curses.color_pair(4))
+            else:
+                stdscr.addstr(pos[1], pos[0], "#", curses.color_pair(1))
 
     print_score()
     print_walls()
