@@ -47,13 +47,17 @@ def main(stdscr):
             val = None
         match val:
             case curses.KEY_RIGHT:
-                movement = (1, 0)
+                if movement != (-1, 0):
+                    movement = (1, 0)
             case curses.KEY_LEFT:
-                movement = (-1, 0)
+                if movement != (1, 0):
+                    movement = (-1, 0)
             case curses.KEY_UP:
-                movement = (0, -1)
+                if movement != (0, 1):
+                    movement = (0, -1)
             case curses.KEY_DOWN:
-                movement = (0, 1)
+                if movement != (0, -1):
+                    movement = (0, 1)
             case 'q' | 'Q':
                 break
         
